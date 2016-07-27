@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-go
+  namespace: laptop-local
+  labels:
+    app: sample-go
+spec:
+  containers:
+    - name: sample-go
+      image: quay.io/coffeepac/sample-go:latest
+      ports:
+      - containerPort: 8080
+  imagePullSecrets:
+    - name: coffeepac-pull-secret

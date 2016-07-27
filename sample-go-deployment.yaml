@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sample-go
+  labels:
+    app: sample-go
+spec:
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        run: sample-go
+    spec:
+      containers:
+      - name: sample-go
+        image: gcr.io/k8s-work/sample-go
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
