@@ -12,6 +12,7 @@ func statusServer() {
     http.HandleFunc("/ping", pingHandle)
     http.HandleFunc("/health", healthHandle)
     http.HandleFunc("/healthBad", healthBadHandle)
+    http.HandleFunc("/pvData", pvDataHandle)
 
     //  create server that doesn't leave things open forever
     s := &http.Server{
@@ -28,6 +29,10 @@ func pingHandle(w http.ResponseWriter, r *http.Request){
 
 func healthHandle(w http.ResponseWriter, r *http.Request){
     fmt.Fprintf(w, "health\n")
+}
+
+func pvDataHandle(w http.ResponseWriter, r *http.Request){
+    fmt.Fprintf(w, "blob\n")
 }
 
 func healthBadHandle(w http.ResponseWriter, r *http.Request){
