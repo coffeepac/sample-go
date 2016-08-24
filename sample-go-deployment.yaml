@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
       - name: sample-go
-        image: quay.io/coffeepac/sample-go:latest
+        image: quay.io/coffeepac/sample-go:pv
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -50,6 +50,9 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           timeoutSeconds: 2
+        volumeMounts:
+        - mountPath: "/mnt/cephfs"
+          name: cephrbd
       volumes:
         - name: cephfs
           cephfs:
@@ -57,6 +60,16 @@ spec:
             #This only works if you have skyDNS resolveable from the kubernetes node. Otherwise you must manually put in one or more mon pod ips.
             - 10.244.97.4:6789 
             user: admin
+            secretRef:
+              name: ceph-client-key
+        - name: cephrbd
+          rbd:
+            monitors:
+            #This only works if you have skyDNS resolveable from the kubernetes node. Otherwise you must manually put in one or more mon pod ips.
+            - 10.244.97.4:6789 
+            user: admin
+            image: ceph-rbd-test
+            pool: rbd
             secretRef:
               name: ceph-client-key
 
