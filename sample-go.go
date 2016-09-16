@@ -79,6 +79,23 @@ func healthBadHandle(w http.ResponseWriter, r *http.Request){
     }
 }
 
+func namedOutput(filehandle *os.File) {
+    counter := 0
+    for {
+        time.Sleep(time.Second)
+        fmt.Fprintf(filehandle, "oh look!  a message on %s! id:  %d\n", filehandle.Name(), counter)
+        counter++
+    }
+}
+
 func main() {
+    custom, err := os.Create("/lorst")
+    if err != nil {
+        fmt.Fprintln(os.Stderr, "Failed to open custom log handle")
+    } else {
+        go namedOutput(custom)
+    }
+    go namedOutput(os.Stderr)
+    go namedOutput(os.Stdout)
     statusServer()
 }
