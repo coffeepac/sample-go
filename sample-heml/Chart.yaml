@@ -1,0 +1,9 @@
+description: A Helm chart for Kubernetes
+name: sample-heml
+version: 0.1.0
+home: github.com/coffeepac/sample-go
+maintainers:
+  - name: Patty McCracken
+    email: coffeepac@gmail.com
+engine: gotpl
+icon: http://www.freeiconspng.com/uploads/coffee-icon-png-29.png
