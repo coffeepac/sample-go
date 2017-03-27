@@ -4,6 +4,8 @@ import (
   "os"
   "fmt"
   "time"
+  "errors"
+  "math/rand"
   ioutil "io/ioutil"
   http "net/http"
 )
@@ -17,6 +19,7 @@ func statusServer() {
     http.HandleFunc("/healthBad", healthBadHandle)
     http.HandleFunc("/pvDataReturn", pvDataReturn)
     http.HandleFunc("/pvDataSet", pvDataSet)
+    http.HandleFunc("/apiTest", downwardAPITester)
 
     //  create server that doesn't leave things open forever
     s := &http.Server{
@@ -69,6 +72,33 @@ func pvDataSet(w http.ResponseWriter, r *http.Request){
     }
 }
 
+var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func randSeq(n int) string {
+    b := make([]rune, n)
+    for i := range b {
+        b[i] = letters[rand.Intn(len(letters))]
+    }
+    return string(b)
+}
+
+func downwardAPITester(w http.ResponseWriter, r *http.Request){
+    bytes := make([]byte, 100)
+    _, err := r.Body.Read(bytes)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)            
+        fmt.Fprintf(w, "Failed to read PUT data\n")
+    }
+        
+    err = ioutil.WriteFile("/var/log/containers/sample-go/" + randSeq(10), bytes, os.ModePerm)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        fmt.Fprintf(w, "PV not present\n")
+    } else {
+        fmt.Fprintf(w, "Data saved")
+    }
+}
+
 func healthBadHandle(w http.ResponseWriter, r *http.Request){
     if r.Method == "GET" {
         HealthBadCount++
@@ -86,6 +116,16 @@ func namedOutput(filehandle *os.File) {
         fmt.Fprintf(filehandle, "oh look!  a message on %s! id:  %d\n", filehandle.Name(), counter)
         counter++
     }
+}
+
+func forTesting(number, multiplier int) (calculated int, err error) {
+    if number * multiplier > 50 {
+        err = errors.New("Number too high")
+    } else {
+        calculated = number * multiplier
+    }
+
+    return
 }
 
 func main() {
