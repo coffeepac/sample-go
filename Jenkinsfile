@@ -33,6 +33,10 @@ node {
         sh 'go version'
     }
 
+    stage('the hell') {
+        sh 'ls -R *'
+    }
+
     stage('build') {
         withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
             sh 'go build sample-go'
