@@ -35,11 +35,13 @@ node {
 
     stage('build') {
         withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-            sh 'go build'
+            sh 'go build sample-go'
         }
     }
     stage('test') {
-        sh 'go test'        
+        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
+            sh 'go test'        
+        }
     }
     stage('docker build') {
         sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
