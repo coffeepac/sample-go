@@ -34,7 +34,7 @@ node {
     }
 
     stage('the hell') {
-        sh 'ls -R'
+        sh 'ls -R ../'
     }
 
     stage('build') {
