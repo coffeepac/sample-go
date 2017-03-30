@@ -1,5 +1,6 @@
-Jenkinsfile (Declarative Pipeline)
+/*Jenkinsfile (Declarative Pipeline)
 pipeline {
+    agent any
     stages {
         stage('build') {
             steps {
@@ -21,6 +22,36 @@ pipeline {
                 sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
             }
         }
-
     }
+}*/
+node {
+    // Install the desired Go version
+    def root = tool name: 'Go 1.8', type: 'go'
+
+    // Export environment variables pointing to the directory where Go was installed
+    withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
+        sh 'go version'
+    }
+
+    stage('the hell') {
+        sh 'ls -R ../'
+    }
+
+    stage('build') {
+        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
+            sh 'go build sample-go'
+        }
+    }
+    stage('test') {
+        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
+            sh 'go test'        
+        }
+    }
+    stage('docker build') {
+        sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
+    }
+    stage('docker push') {
+        sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
+    }
+
 }
