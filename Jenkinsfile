@@ -25,8 +25,8 @@ pipeline {
     }
 }*/
 node {
-    stage('Build') {         
-        sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+    stage('build') {         
+        sh 'go build'
     }
     stage('test') {
         sh 'go test'        
