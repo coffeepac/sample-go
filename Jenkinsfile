@@ -1,5 +1,6 @@
 Jenkinsfile (Declarative Pipeline)
 pipeline {
+    agent any
     stages {
         stage('build') {
             steps {
@@ -21,6 +22,5 @@ pipeline {
                 sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
             }
         }
-
     }
 }
