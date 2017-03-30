@@ -32,9 +32,11 @@ node {
     withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
         sh 'go version'
     }
-    
-    stage('build') {         
-        sh 'go build'
+
+    stage('build') {
+        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
+            sh 'go build'
+        }
     }
     stage('test') {
         sh 'go test'        
