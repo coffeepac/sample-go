@@ -33,6 +33,10 @@ node {
         sh 'go version'
     }
 
+    stage('checkout') {
+        git url: 'https://github.com/coffeepac/sample-go'
+    }
+
     stage('the hell') {
         sh 'ls -R ../'
     }
