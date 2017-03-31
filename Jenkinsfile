@@ -38,14 +38,18 @@ node {
     }
 
     stage('the hell') {
-        sh 'ls -R ../'
+        sh 'ls '
     }
 
     stage('build') {
         withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-            sh 'go build sample-go'
+            sh 'go build'
         }
     }
+    stage('the hell mk II') {
+        sh 'ls '
+    }
+
     stage('test') {
         withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
             sh 'go test'        
