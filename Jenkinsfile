@@ -26,26 +26,17 @@ pipeline {
 }*/
 podTemplate(label: 'sample-go', containers: [
     containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:2.62-alpine', args: '${computer.jnlpmac} ${computer.name}'),
-    containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat')
+    containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true)
   ]) {
     node('sample-go') {
         // Install the desired Go version
         //def root = tool name: 'Go 1.8', type: 'go'
         container('golang'){
 
-            // Export environment variables pointing to the directory where Go was installed
-            //withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-            stage('check version') {
-                sh 'go version'
-            } 
-
             stage('checkout') {
                 git url: 'https://github.com/coffeepac/sample-go'
             }    
-
-            stage('the hell') {
-                sh 'ls '
-            }
 
             stage('build') {
                 sh 'go build'
@@ -56,16 +47,18 @@ podTemplate(label: 'sample-go', containers: [
             }
 
             stage('test') {
-                sh 'go test'        
+                sh 'go test -v'
             }
         }
 
-        //stage('docker build') {
-        //    sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
-        //}
-        //stage('docker push') {
-        //    sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
-        //}
+        container('docker') {
+            stage('docker build') {
+                sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
+            }
 
+            stage('docker push') {
+                sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
+            }
+        }
     }
   }
