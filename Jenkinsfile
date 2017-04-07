@@ -2,8 +2,8 @@ podTemplate(label: 'sample-go', containers: [
     containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:2.62-alpine', args: '${computer.jnlpmac} ${computer.name}'),
     containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat'),
     containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true)
-  ], volumes:[
-    hostPathVolume(hostpath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
+  ], volumes: [
+    hostPathVolume(name: 'dockersocket', hostpath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
   ]) {
     node('sample-go') {
         container('golang'){
