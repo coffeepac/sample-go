@@ -31,7 +31,7 @@ podTemplate(label: 'sample-go', containers: [
             }
 
             stage('docker push') {
-                sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
+                sh 'docker push quay.io/coffeepac/sample-go:jenkins'
             }
         }
     }
