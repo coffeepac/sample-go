@@ -3,7 +3,8 @@ podTemplate(label: 'sample-go', containers: [
     containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat'),
     containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true)
   ], volumes: [
-    hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
+    hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
+    secretVolume(mountPath: '/mnt/quay-robot-auth', secret: 'coffeepac-quay-robot')
   ]) {
     node('sample-go') {
         container('golang'){
@@ -17,7 +18,7 @@ podTemplate(label: 'sample-go', containers: [
             }
 
             stage('the hell mk II') {
-                sh 'ls '
+                sh 'ls /mnt/quay-robot-auth'
             }
 
             stage('test') {
