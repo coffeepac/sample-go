@@ -25,6 +25,7 @@ pipeline {
     }
 }*/
 podTemplate(label: 'sample-go', containers: [
+    containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:2.62-alpine', args: '${computer.jnlpmac} ${computer.name}'),
     containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat')
   ]) {
     node('sample-go') {
