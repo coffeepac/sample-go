@@ -1,37 +1,11 @@
-/*Jenkinsfile (Declarative Pipeline)
-pipeline {
-    agent any
-    stages {
-        stage('build') {
-            steps {
-                sh 'go build'
-            }
-        }
-        stage('test') {
-            steps {
-                sh 'go test'
-            }
-        }
-        stage('docker build') {
-            steps {
-                sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
-            }
-        }
-        stage('docker push') {
-            steps {
-                sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
-            }
-        }
-    }
-}*/
 podTemplate(label: 'sample-go', containers: [
     containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:2.62-alpine', args: '${computer.jnlpmac} ${computer.name}'),
     containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat'),
     containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true)
+  ], volumes:[
+    hostPathVolume(hostpath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
   ]) {
     node('sample-go') {
-        // Install the desired Go version
-        //def root = tool name: 'Go 1.8', type: 'go'
         container('golang'){
 
             stage('checkout') {
