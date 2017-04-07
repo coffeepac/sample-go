@@ -24,42 +24,47 @@ pipeline {
         }
     }
 }*/
-node {
-    // Install the desired Go version
-    def root = tool name: 'Go 1.8', type: 'go'
+podTemplate(label: 'sample-go', containers: [
+    containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat')
+  ]) {
+    node('sample-go') {
+        // Install the desired Go version
+        //def root = tool name: 'Go 1.8', type: 'go'
+        container('golang'){
 
-    // Export environment variables pointing to the directory where Go was installed
-    withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-        sh 'go version'
-    }
+            // Export environment variables pointing to the directory where Go was installed
+            //withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
+            stage('check version') {
+                sh 'go version'
+            } 
 
-    stage('checkout') {
-        git url: 'https://github.com/coffeepac/sample-go'
-    }
+            stage('checkout') {
+                git url: 'https://github.com/coffeepac/sample-go'
+            }    
 
-    stage('the hell') {
-        sh 'ls '
-    }
+            stage('the hell') {
+                sh 'ls '
+            }
 
-    stage('build') {
-        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-            sh 'go build'
+            stage('build') {
+                sh 'go build'
+            }
+
+            stage('the hell mk II') {
+                sh 'ls '
+            }
+
+            stage('test') {
+                sh 'go test'        
+            }
         }
-    }
-    stage('the hell mk II') {
-        sh 'ls '
-    }
 
-    stage('test') {
-        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-            sh 'go test'        
-        }
-    }
-    stage('docker build') {
-        sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
-    }
-    stage('docker push') {
-        sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
-    }
+        //stage('docker build') {
+        //    sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
+        //}
+        //stage('docker push') {
+        //    sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
+        //}
 
-}
+    }
+  }
