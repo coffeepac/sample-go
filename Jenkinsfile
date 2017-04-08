@@ -18,7 +18,7 @@ podTemplate(label: 'sample-go', containers: [
             }
 
             stage('the hell mk II') {
-                sh 'ls /; ls /root; ls /root/.docker/'
+                sh 'ls $HOME; ls ~'
             }
 
             stage('test') {
