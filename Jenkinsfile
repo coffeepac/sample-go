@@ -4,7 +4,7 @@ podTemplate(label: 'sample-go', containers: [
     containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true)
   ], volumes: [
     hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
-    secretVolume(mountPath: '/root/.docker/', secretName: 'coffeepac-quay-robot-dockercfg')
+    secretVolume(mountPath: '/home/jenkins/.docker/', secretName: 'coffeepac-quay-robot-dockercfg')
   ]) {
     node('sample-go') {
         container('golang'){
