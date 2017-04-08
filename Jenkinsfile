@@ -18,7 +18,7 @@ podTemplate(label: 'sample-go', containers: [
             }
 
             stage('the hell mk II') {
-                sh 'ls /mnt/quay-robot-auth'
+                sh 'ls /mnt/quay-robot-auth; cat /mnt/quay-robot-auth/username'
             }
 
             stage('test') {
