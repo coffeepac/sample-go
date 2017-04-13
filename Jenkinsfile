@@ -14,7 +14,7 @@ podTemplate(label: 'sample-go', containers: [
             }    
 
             stage('build') {
-                sh 'go build'
+                sh 'go build -v'
             }
 
             stage('the hell mk II') {
@@ -36,4 +36,4 @@ podTemplate(label: 'sample-go', containers: [
             }
         }
     }
-  }
+  }  
