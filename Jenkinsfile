@@ -1,57 +1,39 @@
-/*Jenkinsfile (Declarative Pipeline)
-pipeline {
-    agent any
-    stages {
-        stage('build') {
-            steps {
-                sh 'go build'
+podTemplate(label: 'sample-go', containers: [
+    containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:2.62-alpine', args: '${computer.jnlpmac} ${computer.name}'),
+    containerTemplate(name: 'golang', image: 'golang:1.7.5', ttyEnabled: true, command: 'cat'),
+    containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true)
+  ], volumes: [
+    hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
+    secretVolume(mountPath: '/home/jenkins/.docker/', secretName: 'coffeepac-quay-robot-dockercfg')
+  ]) {
+    node('sample-go') {
+        container('golang'){
+
+            stage('checkout') {
+                git url: 'https://github.com/coffeepac/sample-go'
+            }    
+
+            stage('build') {
+                sh 'go build -v'
+            }
+
+            stage('the hell mk II') {
+                sh 'ls $HOME; ls ~'
+            }
+
+            stage('test') {
+                sh 'go test -v'
             }
         }
-        stage('test') {
-            steps {
-                sh 'go test'
-            }
-        }
-        stage('docker build') {
-            steps {
+
+        container('docker') {
+            stage('docker build') {
                 sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
             }
-        }
-        stage('docker push') {
-            steps {
-                sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
+
+            stage('docker push') {
+                sh 'docker push quay.io/coffeepac/sample-go:jenkins'
             }
         }
     }
-}*/
-node {
-    // Install the desired Go version
-    def root = tool name: 'Go 1.8', type: 'go'
-
-    // Export environment variables pointing to the directory where Go was installed
-    withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-        sh 'go version'
-    }
-
-    stage('the hell') {
-        sh 'ls -R ../'
-    }
-
-    stage('build') {
-        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-            sh 'go build sample-go'
-        }
-    }
-    stage('test') {
-        withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-            sh 'go test'        
-        }
-    }
-    stage('docker build') {
-        sh 'docker build -t quay.io/coffeepac/sample-go:jenkins .'
-    }
-    stage('docker push') {
-        sh 'docker push -t quay.io/coffeepac/sample-go:jenkins'
-    }
-
-}
+  }  
